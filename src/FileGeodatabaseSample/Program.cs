@@ -14,11 +14,11 @@ namespace FileGeodatabaseSample
 	using OSGeo.OGR;
 	using SpatialReference = OSGeo.OSR.SpatialReference;
 
-	public class Program
+	public static class Program
 	{
 		private const string TestDataSetPath = @"../../../../../data/UA_AT.gdb.zip";
 
-		public static void Main(string[] args)
+		public static void Main()
 		{
 			GdalBase.ConfigureAll();
 
@@ -38,7 +38,7 @@ namespace FileGeodatabaseSample
 
 			Program.SelectRandomFeatureWeighted(dataSetPath, 3);
 
-			Coordinate coordinate = new Coordinate(4793000, 2809000); // (Vienna Town Hall - Rathaus)
+			Coordinate coordinate = new Coordinate(4793000, 2809000); // Vienna Town Hall (Rathaus)
 			Program.SelectFeatureAtLocations(dataSetPath, new List<Coordinate> { coordinate });
 		}
 
@@ -72,7 +72,7 @@ namespace FileGeodatabaseSample
 
 			foreach (KeyValuePair<string, int> keyValuePair in result)
 			{
-				Console.WriteLine($"Classification {keyValuePair.Key} occurs {keyValuePair.Value} times.");
+				Console.WriteLine($"Classification {keyValuePair.Key} occurs {keyValuePair.Value,5} times.");
 			}
 		}
 
@@ -89,7 +89,7 @@ namespace FileGeodatabaseSample
 			string projectionName = spatialReference.GetName();
 			Console.WriteLine($"Projection: {projectionName}");
 
-			Envelope extent = new Envelope();
+			using Envelope extent = new Envelope();
 			layer.GetExtent(extent, 0);
 			var dataSetExtent = new
 			{
@@ -140,7 +140,7 @@ namespace FileGeodatabaseSample
 
 			foreach (Coordinate location in locations)
 			{
-				Geometry point = new Geometry(wkbGeometryType.wkbPoint);
+				using Geometry point = new Geometry(wkbGeometryType.wkbPoint);
 				point.AddPoint(location.X, location.Y, 0);
 
 				Feature feature = layer.GetNextFeature();
@@ -163,7 +163,7 @@ namespace FileGeodatabaseSample
 					{
 						FeatureId = feature.GetFID(),
 						Classification = feature.GetFieldAsString("CODE2012"),
-						FeatureGeometry = Tools.GetSampleItemGeometriesPolygon(feature, spatialReference)
+						FeatureGeometry = Tools.GetSampleItemGeometriesPolygon(feature, spatialReference),
 					});
 				}
 			}
@@ -196,7 +196,7 @@ namespace FileGeodatabaseSample
 				{
 					FeatureId = feature.GetFID(),
 					Classification = feature.GetFieldAsString("CODE2012"),
-					FeatureGeometry = Tools.GetSampleItemGeometriesPolygon(feature, spatialReference)
+					FeatureGeometry = Tools.GetSampleItemGeometriesPolygon(feature, spatialReference),
 				});
 			}
 
@@ -248,7 +248,7 @@ namespace FileGeodatabaseSample
 					{
 						FeatureId = feature.GetFID(),
 						Classification = feature.GetFieldAsString("CODE2012"),
-						FeatureGeometry = Tools.GetSampleItemGeometriesPolygon(feature, spatialReference)
+						FeatureGeometry = Tools.GetSampleItemGeometriesPolygon(feature, spatialReference),
 					});
 				}
 			}
@@ -317,10 +317,10 @@ namespace FileGeodatabaseSample
 
 			columnScale.CalculateProbabilities();
 
-			foreach (KeyValuePair<string, ColumnValueScale> keyValuePair in columnScale.ColumnValueScales)
+			foreach ((string classification, ColumnValueScale columnValueScale) in columnScale.ColumnValueScales)
 			{
 				Console.WriteLine(
-					$"Classification {keyValuePair.Key} has an aggregated scale limit of {keyValuePair.Value.ProbabilityLimit,7:P}.");
+					$"Classification {classification} has an aggregated scale limit of {columnValueScale.ProbabilityLimit,8:P}.");
 			}
 
 			return columnScale;

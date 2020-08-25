@@ -36,7 +36,7 @@ namespace FileGeodatabaseSample.Models
 
 			foreach (T key in ColumnValueScales.Keys)
 			{
-				limit += (double)ColumnValueScales[key].ColumnValueSize / TotalSize;
+				limit += ColumnValueScales[key].ColumnValueSize / TotalSize;
 				ColumnValueScales[key].ProbabilityLimit = limit;
 			}
 		}
