@@ -1,6 +1,6 @@
 # Working with File Geodatabase using GDAL/OGR in C#
 
-Repository of sample code for the corresponding [blog post](https://blog.spatial-focus.net/posts/TBD)
+Repository of sample code for the corresponding [blog posts](https://spatial-focus.net/blog/working-with-file-geodatabase-in-csharp-1)
 
 ![Urban Atlas 2012](.github/gdb-ua2012.png 'gdb-ua2012.png')
 
